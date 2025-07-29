@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liveo</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    @keyframes fade-in {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-element { opacity: 0; }
+    .fade-visible { animation: fade-in 1s ease-out forwards; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: radial-gradient(circle at 25% 25%, rgba(45,55,72,0.8), rgba(17,24,39,1));
+      background-attachment: fixed;
+    }
+
+    .sidebar {
+      transition: transform 0.4s ease;
+      transform: translateX(-100%);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .highlight {
+      box-shadow: 0 0 10px rgba(34, 211, 237, 0.7);
+      transform: scale(1.05);
+      transition: all 0.5s ease;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+  <!-- Navbar -->
+  <header class="bg-gray-900/80 backdrop-blur sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto px-6 flex justify-between items-center py-4">
+      <h1 class="text-2xl font-bold text-cyan-400">LIVEO</h1>
+      <nav id="nav-links" class="hidden md:flex space-x-8">
+        <a href="#home" class="hover:text-cyan-400 transition-colors">Home</a>
+        <a href="#properties" class="hover:text-cyan-400 transition-colors">Properties</a>
+        <a href="#testimonials" class="hover:text-cyan-400 transition-colors">Testimonials</a>
+        <a href="#map" class="hover:text-cyan-400 transition-colors">Map</a>
+        <a href="#contact" class="hover:text-cyan-400 transition-colors">Contact</a>
+      </nav>
+      <button id="menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-800 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden px-6 pb-4 flex flex-col space-y-4 bg-gray-900">
+      <a href="#home" class="hover:text-cyan-400">Home</a>
+      <a href="#properties" class="hover:text-cyan-400">Properties</a>
+      <a href="#testimonials" class="hover:text-cyan-400">Testimonials</a>
+      <a href="#map" class="hover:text-cyan-400">Map</a>
+      <a href="#contact" class="hover:text-cyan-400">Contact</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="home" class="relative bg-cover bg-center h-[85vh]" style="background-image: url('images/hero.jpg'); background-attachment: fixed;">
+    <div class="absolute inset-0 bg-black/60 flex flex-col justify-center items-center text-center px-6">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-4 fade-element">
+        Find Your Dream Home
+      </h2>
+      <p class="text-gray-300 mb-8 max-w-xl fade-element">
+        Search properties by location, price, and type. Designed for luxury living.
+      </p>
+
+      <!-- Search Bar -->
+      <div class="fade-element bg-gray-800/40 backdrop-blur-xl rounded-xl p-4 flex flex-col md:flex-row gap-4 w-full max-w-3xl border border-gray-700/30">
+        <input id="search-location" type="text" placeholder="Location" class="flex-1 px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+        <select id="search-type" class="flex-1 px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+          <option value="">Property Type</option>
+          <option value="house">House</option>
+          <option value="apartment">Apartment</option>
+        </select>
+        <button id="search-btn" class="bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-semibold px-6 py-3 rounded-lg transition transform hover:scale-105">
+          Search
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Properties -->
+  <section id="properties" class="container mx-auto px-6 py-20 relative text-justify">
+    <div class="flex flex-row md:flex-row md:justify-between md:items-center mb-10 gap-4">
+      <h2 class="text-2xl font-bold text-white">Featured Properties</h2>
+      <div class="flex gap-4">
+        <button id="clear-btn" class="bg-red-400 hover:bg-red-500 text-gray-900 font-semibold px-4 py-2 rounded-lg transition transform hover:scale-105 hidden">
+          Clear
+        </button>
+        <button id="filter-btn" class="bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-semibold px-4 py-2 rounded-lg transition transform hover:scale-105">
+          Filters
+        </button>
+      </div>
+    </div>
+
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg z-50 p-6">
+      <button id="close-sidebar" class="mb-6 text-gray-300 hover:text-cyan-400">✖</button>
+      <h3 class="text-xl font-bold mb-4 text-white">Filter Properties</h3>
+      <label class="block mb-2">Price Range</label>
+      <input type="range" min="100000" max="1000000" step="50000" class="w-full mb-6">
+      <label class="block mb-2">Type</label>
+      <select class="w-full mb-6 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg">
+        <option>Any</option>
+        <option>House</option>
+        <option>Apartment</option>
+      </select>
+      <button class="w-full bg-cyan-400 text-gray-900 py-2 rounded-lg hover:bg-cyan-500">Apply Filters</button>
+    </aside>
+
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/taguig1.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Taguig - Modern Townhouse</h3>
+      <p class="text-gray-400 mb-4">3 Beds • 2 Baths • 180 sqm</p>
+      <p class="text-gray-400 mb-4">A contemporary townhouse located in the heart of Taguig, perfect for young professionals and families seeking modern living with convenience.</p>
+      <p class="text-cyan-400 font-bold text-lg">$320,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/taguig2.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Taguig - Luxury Condo</h3>
+      <p class="text-gray-400 mb-4">2 Beds • 2 Baths • 90 sqm</p>
+      <p class="text-gray-400 mb-4">Experience luxury living in this high-rise condo with premium amenities and a stunning view of Bonifacio Global City.</p>
+      <p class="text-cyan-400 font-bold text-lg">$210,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/taguig3.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Taguig - Elegant House</h3>
+      <p class="text-gray-400 mb-4">4 Beds • 3 Baths • 220 sqm</p>
+      <p class="text-gray-400 mb-4">A spacious family home with a beautiful garden, located in a quiet neighborhood, ideal for those seeking comfort and tranquility.</p>
+      <p class="text-cyan-400 font-bold text-lg">$500,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <!-- Makati -->
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/makati1.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Makati - Penthouse </h3>
+      <p class="text-gray-400 mb-4">2 Beds • 2 Baths • 150 sqm</p>
+      <p class="text-gray-400 mb-4">A luxurious penthouse with panoramic views of the Makati skyline, featuring high-end finishes and exclusive amenities.</p>
+      <p class="text-cyan-400 font-bold text-lg">$400,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/makati2.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Makati - Studio Condo</h3>
+      <p class="text-gray-400 mb-4">1 Bed • 1 Bath • 45 sqm</p>
+      <p class="text-gray-400 mb-4">A cozy studio condo in the heart of Makati, ideal for young professionals or as an investment property.</p>
+      <p class="text-cyan-400 font-bold text-lg">$150,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/makati3.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Makati - Family Condo</h3>
+      <p class="text-gray-400 mb-4">3 Beds • 2 Baths • 130 sqm</p>
+      <p class="text-gray-400 mb-4">A spacious family condo with modern amenities, located in a prime area of Makati, perfect for families seeking comfort and convenience.</p>
+      <p class="text-cyan-400 font-bold text-lg">$300,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <!-- Quezon City -->
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/qc1.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Quezon City - Luxury Villa</h3>
+      <p class="text-gray-400 mb-4">3 Beds • 2 Baths • 200 sqm</p>
+      <p class="text-gray-400 mb-4">A stunning luxury villa with a private pool and garden, located in a prestigious neighborhood of Quezon City.</p>
+      <p class="text-cyan-400 font-bold text-lg">$450,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/qc2.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Quezon City - Modern Apartment</h3>
+      <p class="text-gray-400 mb-4">2 Beds • 1 Bath • 90 sqm</p>
+      <p class="text-gray-400 mb-4">A stylish modern apartment with contemporary design, located in a vibrant area of Quezon City, ideal for young professionals.</p>
+      <p class="text-cyan-400 font-bold text-lg">$250,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+
+  <div class="fade-element bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-cyan-500/30 transition transform hover:scale-105">
+    <img src="images/qc3.jpg" class="w-full h-56 object-cover" />
+    <div class="p-6">
+      <h3 class="text-xl font-semibold mb-2 text-white">Quezon City - Family House</h3>
+      <p class="text-gray-400 mb-4">4 Beds • 3 Baths • 300 sqm</p>
+      <p class="text-gray-400 mb-4">A spacious family house with a large backyard, perfect for families looking for a comfortable and peaceful living environment.</p>
+      <p class="text-cyan-400 font-bold text-lg">$550,000</p>
+      <button class="open-modal bg-cyan-400 text-gray-900 px-4 py-2 mt-4 rounded-lg">View Details</button>
+    </div>
+  </div>
+</div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="container mx-auto px-6 py-20">
+    <h2 class="text-3xl font-bold mb-8 text-white">What Our Clients Say</h2>
+    <div id="testimonial-slider" class="relative overflow-hidden">
+      <div class="flex transition-transform duration-700" id="testimonial-track">
+        <div class="w-full flex-shrink-0 p-6">
+          <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
+            <p class="text-gray-300 mb-4">“DreamHomes made it easy to find my ideal home. Highly recommended!”</p>
+            <h4 class="text-white font-semibold">- Maria Santos</h4>
+          </div>
+        </div>
+        <div class="w-full flex-shrink-0 p-6">
+          <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
+            <p class="text-gray-300 mb-4">“Smooth transaction and very professional agents.”</p>
+            <h4 class="text-white font-semibold">- John Cruz</h4>
+          </div>
+        </div>
+      </div>
+      <button id="prev-testimonial" class="absolute left-0 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-700 rounded-full hover:bg-cyan-500"> < </button>
+      <button id="next-testimonial" class="absolute right-0 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-700 rounded-full hover:bg-cyan-500"> > </button>
+    </div>
+  </section>
+
+  <!-- Map -->
+  <section id="map" class="container mx-auto px-6 py-20">
+    <h2 class="text-3xl font-bold mb-8 text-white">Explore Our Locations</h2>
+    <iframe id="map-frame" class="w-full h-96 rounded-xl"
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.8785056153395!2d121.03477897590197!3d14.601895085895798!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397b7b5a6fbfdc7%3A0x49af5d2b2a9f1a!2sQuezon%20City%20Hall!5e0!3m2!1sen!2sph!4v1722037935540!5m2!1sen!2sph"
+  style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="container mx-auto px-6 py-20 max-w-xl">
+    <h2 class="text-3xl font-bold mb-8 text-white">Contact Us</h2>
+    <form class="fade-element space-y-6">
+      <input type="text" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-cyan-400">
+      <input type="email" placeholder="Your Email" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-cyan-400">
+      <textarea placeholder="Your Message" rows="5" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-cyan-400"></textarea>
+      <button class="bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-semibold px-6 py-3 rounded-lg transition transform hover:scale-105">
+        Send Message
+      </button>
+    </form>
+  </section>
+
+  <footer class="bg-gray-950 text-gray-400 py-8">
+    <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+      <p>&copy; 2025 DreamHomes. All rights reserved.</p>
+      <div class="space-x-6 mt-4 md:mt-0">
+        <a href="#" class="hover:text-cyan-400 transition">Privacy</a>
+        <a href="#" class="hover:text-cyan-400 transition">Terms</a>
+        <a href="#" class="hover:text-cyan-400 transition">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll-to-top button -->
+  <button id="scroll-top" class="hidden fixed bottom-25 right-6 bg-cyan-400 hover:bg-cyan-500 text-gray-900 p-2 rounded-full shadow-md transition transform hover:scale-110">
+    ↑
+  </button>
+
+  <!-- Modal -->
+  <div id="property-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-8 rounded-2xl max-w-lg w-full relative">
+      <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-cyan-400">✖</button>
+      <img id="modal-image" src="" class="w-full h-56 object-cover rounded-xl mb-4" />
+      <h3 id="modal-title" class="text-2xl font-bold text-white mb-2"></h3>
+      <p id="modal-desc" class="text-gray-300 mb-4"></p>
+      <p id="modal-price" class="text-cyan-400 font-bold text-lg"></p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
